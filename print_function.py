@@ -63,33 +63,14 @@ class InvalidOperation(CalculatorException):
 def display_info(func):
     @functools.wraps(func)
     def inner(*args, **kwargs):
-        print(f"Executing {func.__name__} function with args: {args}, {kwargs}")
-        print(f"function annotations: {func.__annotations__}")
-        print(f"function closure: {func.__closure__}")
-        print(f"function code: {func.__code__}")
-        print(f"function defaults: {func.__defaults__}")
-        print(f"function dict: {func.__dict__}")
-        print(f"function dir: {func.__dir__()}")
-        print(f"function doc: {func.__doc__}")
-        print(f"function globals: {func.__globals__}")
-        print(f"function hash: {func.__hash__()}")
-        print(f"function init: {func.__init__()}")
-        print(f"function init_subclass: {func.__init_subclass__()}")
-        print(f"function kwdefaults: {func.__kwdefaults__}")
-        print(f"function module: {func.__module__}")
-        print(f"function name: {func.__name__}")
-        print(f"function qualname: {func.__qualname__}")
-        print(f"function repr: {func.__repr__()}")
-        print(f"function sizeof: {func.__sizeof__()}")
-        print(f"function str: {func.__str__()}")
-        print(f"function subclasshook: {func.__subclasshook__()}")
+        print(f"{func.__module__} Executing {func.__qualname__} function with args: {args}, {kwargs}")
         start_time = time.monotonic()
 
         value = func(*args, **kwargs)
 
         end_time = time.monotonic()
         elapsed_time = round((end_time - start_time) * 1000, 6)
-        print(f"Finished execution of {func.__name__} in {elapsed_time} miliseconds")
+        print(f"{func.__module__} Finished execution of {func.__name__} in {elapsed_time} miliseconds")
         return value
 
     return inner
@@ -122,6 +103,7 @@ def some_(a: str, b: int):
 
 def main():
     printer("Mateus", "Furquim", age=29, height=1.80)
+    # printer("João", "Euko", age=30, height=1.62)
     # some_("1", 2)
     # calculator(2, 4, operation="addition")
 
