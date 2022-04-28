@@ -1,5 +1,7 @@
 #!/bin/env python
 import functools
+import inspect
+import os
 import time
 
 
@@ -63,21 +65,45 @@ class InvalidOperation(CalculatorException):
 def display_info(func):
     @functools.wraps(func)
     def inner(*args, **kwargs):
-        print(f"{func.__module__} Executing {func.__qualname__} function with args: {args}, {kwargs}")
+        inner_frame = inspect.currentframe()
+        called_frame = inspect.getouterframes(inner_frame)[1].frame
+
+        try:
+            module = inspect.getmodule(called_frame)
+            info = inspect.getframeinfo(called_frame)
+        finally:
+            del inner_frame
+            del called_frame
+
+        bind_arguments = inspect.signature(func).bind(*args, **kwargs)
+        bind_arguments.apply_defaults()
+        arguments = dict(bind_arguments.arguments)
+
+        info_filename = os.path.splitext(os.path.basename(info.filename))[0]
+
+        module_info = [module.__package__, module.__name__]
+        frame_info = [info_filename, info.function]
+        module_frame_info = module_info + frame_info
+
+        info_path = ".".join([info for info in module_frame_info if info])
+        info_path += f":{info.lineno}"
+
+        print(f"{info_path} Executing {func.__qualname__}({arguments})")
         start_time = time.monotonic()
 
         value = func(*args, **kwargs)
 
         end_time = time.monotonic()
         elapsed_time = round((end_time - start_time) * 1000, 6)
-        print(f"{func.__module__} Finished execution of {func.__name__} in {elapsed_time} miliseconds")
+        print(f"{info_path} Finished {func.__qualname__} in {elapsed_time} miliseconds")
+
         return value
 
     return inner
 
 
 @display_info
-def printer(person, family, height, age):
+def printer(person, family, height, age=20):
     print(f"Hello\n{family}, {person} ({age} y.o, {height} m)")
 
 
@@ -94,21 +120,46 @@ def calculator(a, b, operation=None):
 
 
 def some_(a: str, b: int):
-    myframe = inspect.currentframe()
-    args, _, _, values = inspect.getargvalues(myframe)
-    print([values[arg] for arg in args])
-    print(inspect.getargvalues(myframe).locals)
+    frame = inspect.currentframe()
+
+    try:
+        print(frame)
+
+        src_line = inspect.getsourcelines(frame)
+        line_no = src_line[1]
+        print(line_no)
+
+        src_file = inspect.getsourcefile(frame)
+        print(src_file)
+
+        file = inspect.getfile(frame)
+        print(file)
+
+        module = inspect.getmodule(frame)
+        print(module)
+
+        info = inspect.getframeinfo(frame)
+        print(info)
+        print(info.filename)
+        print(info.lineno)
+        print(info.function)
+
+        members = inspect.getmembers(module)
+        print("\nmembers:")
+        for k, v in members:
+            print(f"{k} -> {v}")
+
+    finally:
+        del frame
+
     return a + str(b)
 
 
 def main():
-    printer("Mateus", "Furquim", age=29, height=1.80)
+    printer("Mateus", "Furquim", height=1.80)
     # printer("João", "Euko", age=30, height=1.62)
-    # some_("1", 2)
+    # print(some_("1", 2))
     # calculator(2, 4, operation="addition")
-
-
-import inspect
 
 
 if __name__ == "__main__":
