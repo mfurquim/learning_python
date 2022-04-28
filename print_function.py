@@ -128,9 +128,21 @@ def calculator(a, b, operation=None):
         return a + b
 
 
+def some_(a: str, b: int):
+    myframe = inspect.currentframe()
+    args, _, _, values = inspect.getargvalues(myframe)
+    print([values[arg] for arg in args])
+    print(inspect.getargvalues(myframe).locals)
+    return a + str(b)
+
+
 def main():
-    printer("Mateus", "Furquim", age=29, height=1.80)
+    # printer("Mateus", "Furquim", age=29, height=1.80)
+    some_("1", 2)
     # calculator(2, 4, operation="addition")
+
+
+import inspect
 
 
 if __name__ == "__main__":
