@@ -1,6 +1,7 @@
 #!/bin/env python
 import functools
 import inspect
+import os
 import time
 
 
@@ -37,7 +38,7 @@ def display_info(func):
 
         end_time = time.monotonic()
         elapsed_time = round((end_time - start_time) * 1000, 6)
-        print(f"{info_path} Finished {func.__qualname__} in {elapsed_time} miliseconds")
+        print(f"{info_path} Finished {func.__qualname__} in {elapsed_time} miliseconds -> {value}")
 
         return value
 

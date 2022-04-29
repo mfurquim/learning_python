@@ -8,7 +8,7 @@ def main():
     ma = imports.ModelA(1)
     print(ma)
 
-    print(imports.utility(1, 2))
+    print(imports.utility("1", 2))
 
 
 if __name__ == "__main__":
