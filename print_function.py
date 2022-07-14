@@ -89,17 +89,6 @@ def display_info(func):
         info_path += f":{info.lineno}"
 
         print(f"{info_path} Executing {func.__qualname__}({arguments})")
-        start_time = time.monotonic()
-
-        value = func(*args, **kwargs)
-
-        end_time = time.monotonic()
-        elapsed_time = round((end_time - start_time) * 1000, 6)
-        print(f"{info_path} Finished {func.__qualname__} in {elapsed_time} miliseconds")
-
-        return value
-
-    return inner
 
 
 @display_info
@@ -107,16 +96,30 @@ def printer(person, family, height, age=20):
     print(f"Hello\n{family}, {person} ({age} y.o, {height} m)")
 
 
+def display_info_with_parameter(dec_arg):
+    def display_info(func):
+        @functools.wraps(func)
+        def inner(*args, **kwargs):
+            log.debug(f"{dec_arg} Executing {func.__name__} function with args: {args}, {kwargs}")
+            start_time = time.monotonic()
+
+            value = func(*args, **kwargs)
+
+            end_time = time.monotonic()
+            elapsed_time = round((end_time - start_time) * 1000, 6)
+            log.debug(f"Finished execution of {func.__name__} in {elapsed_time} miliseconds")
+
+            return value
+
+        return inner
+
+    return display_info
+
+
+# @display_info_with_parameter("Dec Arg")
 @display_info
-def calculator(a, b, operation=None):
-    if not operation:
-        raise (EmptyOperation(a, b))
-
-    if operation not in ["addition"]:
-        raise (InvalidOperation(a, b, operation=operation))
-
-    if operation == "addition":
-        return a + b
+def printer(person, family, height, age):
+    print(f"Hello\n{family}, {person} ({age} y.o, {height} m)")
 
 
 def some_(a: str, b: int):
