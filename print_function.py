@@ -89,6 +89,17 @@ def display_info(func):
         info_path += f":{info.lineno}"
 
         print(f"{info_path} Executing {func.__qualname__}({arguments})")
+        start_time = time.monotonic()
+
+        value = func(*args, **kwargs)
+
+        end_time = time.monotonic()
+        elapsed_time = round((end_time - start_time) * 1000, 6)
+        log.debug(f"{info_path} Finished execution of {func.__name__} in {elapsed_time} miliseconds -> {value}")
+
+        return value
+
+    return inner
 
 
 @display_info
